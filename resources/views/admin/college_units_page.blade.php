@@ -35,6 +35,7 @@
                                 <thead>
                                     <tr>
                                         <th>College, Office, or Unit</th>
+                                        <th>Acronym</th>
                                         <th>Type</th>
                                         <th>Action</th>
                                     </tr>
@@ -65,6 +66,11 @@
                                 <label class="form-label">Name</label>
                                 <input type="text" class="form-control" id="formAddCollegeUnitName"
                                     name="formAddCollegeUnitName" required placeholder="Enter name">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="formAddCollegeUnitAcronym" class="form-label">Acronym</label>
+                                <input type="text" id="formAddCollegeUnitAcronym" name="formAddCollegeUnitAcronym"
+                                    class="form-control" placeholder="Enter Acronym">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Type</label>
@@ -107,6 +113,11 @@
                                 <label class="form-label">Name</label>
                                 <input type="text" class="form-control" id="formEditCollegeUnitName"
                                     name="formEditCollegeUnitName" required placeholder="Enter name">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Acronym</label>
+                                <input type="text" class="form-control" id="formEditCollegeUnitAcronym"
+                                    name="formEditCollegeUnitAcronym" required placeholder="Enter acronym">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Type</label>
@@ -151,6 +162,7 @@
                         var editButton = `<button type="button" class="btn btn-sm btn-success me-1" 
                             onclick="editCollegeUnit(
                                 ${collegeUnits.id}, 
+                                '${collegeUnits.acronym}', 
                                 '${collegeUnits.college_office_unit_name.replace(/'/g, "\\'")}',
                                 ${collegeUnits.category_id}
                             )" title="Edit">
@@ -164,6 +176,7 @@
 
                         table.row.add([
                             collegeUnits.college_office_unit_name,
+                            collegeUnits.acronym,
                             collegeUnits.category_name,
                             editButton + deleteButton
                         ]);
@@ -215,6 +228,7 @@
                 data: {
                     _token: "{{ csrf_token() }}",
                     formAddCollegeUnitName: $('#formAddCollegeUnitName').val(),
+                    formAddCollegeUnitAcronym: $('#formAddCollegeUnitAcronym').val(),
                     formAddCollegeUnitType: $('#formAddCollegeUnitType').val()
                 },
                 dataType: 'json',
@@ -240,9 +254,10 @@
             });
         });
 
-        function editCollegeUnit(id, name, categoryId) {
+        function editCollegeUnit(id, acronym, name, categoryId) {
             console.log('Editing:', {
                 id,
+                acronym,
                 name,
                 categoryId
             }); // Debug line
@@ -250,6 +265,7 @@
             // Set form values
             $('#formEditCollegeUnitID').val(id);
             $('#formEditCollegeUnitName').val(name);
+            $('#formEditCollegeUnitAcronym').val(acronym);
 
             // Set select value
             $('#formEditCollegeUnitType').val(categoryId);
@@ -269,6 +285,7 @@
                     _token: "{{ csrf_token() }}",
                     id: $('#formEditCollegeUnitID').val(),
                     college_office_unit_name: $('#formEditCollegeUnitName').val(),
+                    college_office_unit_acronym: $('#formEditCollegeUnitAcronym').val(),
                     college_office_unit_category_id: $('#formEditCollegeUnitType').val()
                 },
                 dataType: 'json',

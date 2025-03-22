@@ -75,7 +75,9 @@
                                         @foreach ($budgetAllocations as $allocation)
                                             <option value="{{ $allocation->id }}">
                                                 {{ $allocation->accountCode->account_name }} |
-                                                {{ Number::currency($allocation->amount, 'PHP') }} | {{ $allocation->wholeBudget->source_of_fund }} | {{ $allocation->wholeBudget->year }}
+                                                {{ Number::currency($allocation->amount, 'PHP') }} |
+                                                {{ $allocation->wholeBudget->source_of_fund }} |
+                                                {{ $allocation->wholeBudget->year }}
                                             </option>
                                         @endforeach
                                     @else
@@ -142,7 +144,8 @@
                         if (ppmp.approval_status == 0) {
                             approvalStatus = '<span class="badge bg-warning">Pending</span>';
                         } else if (ppmp.approval_status == 1) {
-                            approvalStatus = '<span class="badge bg-success">Approved</span>';
+                            approvalStatus =
+                                '<span class="badge bg-success">Approved</span> <small class="text-muted">Ready for PR</small>';
                         } else {
                             approvalStatus = '<span class="badge bg-danger">Not Approved</span>';
                         }
@@ -157,14 +160,7 @@
             </button>
         `;
 
-                        // Only add the export button if approval_status is 1 (Approved)
-                        if (ppmp.approval_status == 1) {
-                            actionButtons += `
-                <button type="button" class="btn btn-sm btn-success" title="Proceed to PR Creation">
-                    <i class="fas fa-file-export"></i>
-                </button>
-            `;
-                        }
+
 
                         table.row.add([
                             ppmp.ppmp_code,

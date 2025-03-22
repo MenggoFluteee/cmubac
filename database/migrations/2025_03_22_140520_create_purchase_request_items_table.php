@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('college_office_units', function (Blueprint $table) {
+        Schema::create('purchase_request_items', function (Blueprint $table) {
             $table->id();
-            $table->string('acronym')->nullable();
-            $table->string('college_office_unit_name');
-            $table->foreignId('category_id')->constrained('college_office_unit_categories');
-            $table->string('college_office_unit_image_path')->nullable();
+            $table->foreignId('purchase_request_id')->constrained('purchase_requests');
+            $table->foreignId('item_id')->constrained('items');
+            $table->bigInteger('status')->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('college_office_units');
+        Schema::dropIfExists('purchase_request_items');
     }
 };

@@ -199,7 +199,8 @@
                 style="">
                 <li class="sidebar-item"><a class="sidebar-link" href="{{ route('budgetPPMPsPage') }}"><i
                             class="align-middle" data-lucide="file"></i> PPMP</a></li>
-                <li class="sidebar-item"><a class="sidebar-link" href=""><i class="align-middle"
+                <li class="sidebar-item"><a class="sidebar-link"
+                        href="{{ route('budgetOfficePurchaseRequestsPage') }}"><i class="align-middle"
                             data-lucide="file-input"></i> Purchase Request</a></li>
 
             </ul>

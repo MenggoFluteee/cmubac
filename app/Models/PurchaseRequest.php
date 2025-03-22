@@ -9,7 +9,9 @@ class PurchaseRequest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['pr_code', 'ppmp_id', 'purpose', 'is_submitted', 'date_submitted', 'approval_status', 'date_approved', 'prepared_by', 'college_office_unit_id'];
+    protected $table = 'purchase_requests';
+    
+    protected $fillable = ['pr_code', 'ppmp_id', 'purpose', 'is_submitted', 'date_submitted', 'approval_status', 'date_approved', 'prepared_by', 'college_office_unit_id', 'incrementing_number'];
 
     public function ppmp()
     {

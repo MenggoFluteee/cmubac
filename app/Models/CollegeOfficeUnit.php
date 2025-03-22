@@ -10,6 +10,7 @@ class CollegeOfficeUnit extends Model
         'college_office_unit_name',
         'category_id',
         'college_office_unit_image_path',
+        'acronym',
     ];
 
     public function category()

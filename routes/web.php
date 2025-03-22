@@ -14,6 +14,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PPMPCommentController;
 use App\Http\Controllers\PPMPController;
 use App\Http\Controllers\PPMPItemController;
+use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\RequestedItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WholeBudgetController;
@@ -135,6 +136,9 @@ Route::middleware('auth', CheckRole::class . ':3')->group(function () {
     Route::get('budget-office-account-codes-page', [BudgetController::class, 'budgetOfficeAccountCodesPage'])->name('budgetOfficeAccountCodesPage');
     Route::get('budget-ppms-page', [BudgetController::class, 'budgetPPMPsPage'])->name('budgetPPMPsPage');
     Route::get('budget-view-ppmp-details/{id}', [BudgetController::class, 'budgetViewPPMPDetails'])->name('budgetViewPPMPDetails');
+    Route::get('budget-office-purchase-requests-page', [BudgetController::class, 'budgetOfficePurchaseRequestsPage'])->name('budgetOfficePurchaseRequestsPage');
+    Route::get('budget-office-purchase-requests-details/{id}', [BudgetController::class, 'budgetOfficePurchaseRequestDetails'])->name('budgetOfficePurchaseRequestDetails');
+
 
     // Managing the whole budget
     Route::post('budget-office-fetch-whole-budget', [WholeBudgetController::class, 'fetchYearlyBudget'])->name('fetchYearlyBudget');
@@ -165,6 +169,10 @@ Route::middleware('auth', CheckRole::class . ':3')->group(function () {
     Route::post('budget-office-fetch-ppmps', [BudgetController::class, 'budgetFetchPPMPs'])->name('budgetFetchPPMPs');
     Route::post('budget-office-update-ppmp-status', [PPMPController::class, 'budgetOfficeUpdatePPMPStatus'])->name('budgetOfficeUpdatePPMPStatus');
     Route::post('budget-office-add-comment-to-ppmp', [PPMPCommentController::class, 'budgetOfficeAddCommentToPPMP'])->name('budgetOfficeAddCommentToPPMP');
+
+    // BUDGET OFFICE MANAGEMENT OF PURCHASE REQUESTS
+    Route::get('budget-office-fetch-purchase-requests', [PurchaseRequestController::class, 'budgetOfficeFetchPurchaseRequests'])->name('budgetOfficeFetchPurchaseRequests');
+
 });
 
 // USER
@@ -188,13 +196,13 @@ Route::middleware('auth', CheckRole::class . ':4')->group(function () {
     // End user adding of item on PPMP
     // Fetching of items to displat to the PPMP Details Page
     Route::post('fetch-items-for-ppmp', [PPMPItemController::class, 'fetchItemsForPPMP'])->name('fetchItemsForPPMP');
-  
+
     Route::post('end-user-add-item-to-ppmp', [PPMPItemController::class, 'endUserAddItemToPPMP'])->name('endUserAddItemToPPMP');
     Route::post('end-user-edit-ppmp-item', [PPMPItemController::class, 'endUserEditPPMPItem'])->name('endUserEditPPMPItem');
     Route::post('end-user-delete-item-from-ppmp', [PPMPItemController::class, 'endUserDeleteItemFromPPMP'])->name('endUserDeleteItemFromPPMP');
     Route::post('end-user-add-comment-to-ppmp', [PPMPCommentController::class, 'endUserAddCommentToPPMP'])->name('endUserAddCommentToPPMP');
 
-    
+
 
 
     // Request New Item
@@ -202,4 +210,10 @@ Route::middleware('auth', CheckRole::class . ':4')->group(function () {
     Route::get('end-user-view-requested-item-details/{id}', [EndUserController::class, 'viewRequestedItemDetails'])->name('endUserViewRequestedItemDetails');
     Route::post('end-user-add-new-requested-item', [RequestedItemController::class, 'addNewRequestedItem'])->name('addNewRequestedItem');
     Route::post('end-user-delete-requested-item', [RequestedItemController::class, 'deleteRequestedItem'])->name('endUserDeleteRequestedItem');
+
+
+    // PR MANAGEMENT
+    Route::get('end-user-fetch-pr', [PurchaseRequestController::class, 'endUserFetchPurchaseRequests'])->name('endUserFetchPurchaseRequests');
+    Route::post('end-user-create-new-pr', [PurchaseRequestController::class, 'endUserCreateNewPR'])->name('endUserCreateNewPR');
+
 });

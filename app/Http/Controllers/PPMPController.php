@@ -38,17 +38,15 @@ class PPMPController extends Controller
             'formAddPPMPAccountCode' => 'required|exists:budget_allocations,id|numeric',
         ]);
 
-        // Get the college name from the authenticated user
-        $collegeName = Auth::user()->collegeOfficeUnit->college_office_unit_name; // Assuming there's a relationship to get the college name
-        $collegeAcronym = implode('', array_map(function ($word) {
-            return strtoupper($word[0]);
-        }, explode(' ', $collegeName)));
+        // Get the college office unit data
+        $collegeOfficeUnit = Auth::user()->collegeOfficeUnit;
+
+        // Use the acronym if available, otherwise generate one from the full college name
+        $collegeAcronym = $collegeOfficeUnit->acronym ?? implode('', array_map(fn($word) => strtoupper($word[0]), explode(' ', $collegeOfficeUnit->college_office_unit_name)));
 
         // Fetch the account code name and create its acronym
-        $accountCodeName = BudgetAllocation::find($validatedData['formAddPPMPAccountCode'])->accountCode->account_name; // Assuming there's a relationship to get the account code name
-        $accountCodeAcronym = implode('', array_map(function ($word) {
-            return strtoupper($word[0]);
-        }, explode(' ', $accountCodeName)));
+        $accountCodeName = BudgetAllocation::find($validatedData['formAddPPMPAccountCode'])->accountCode->account_name;
+        $accountCodeAcronym = implode('', array_map(fn($word) => strtoupper($word[0]), explode(' ', $accountCodeName)));
 
         // Get current year and month
         $yearMonth = date('mY');
@@ -57,6 +55,7 @@ class PPMPController extends Controller
         $maxIncrementingNumber = PPMP::whereHas('budgetAllocation', function ($query) {
             $query->where('college_office_unit_id', Auth::user()->college_office_unit_id);
         })->max('incrementing_number');
+
         $incrementingNumber = $maxIncrementingNumber ? $maxIncrementingNumber + 1 : 1;
 
         // Construct the PPMP code
@@ -74,6 +73,7 @@ class PPMPController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Successfully added a new PPMP!']);
     }
+
 
     public function endUserDeletePPMP(Request $request)
     {

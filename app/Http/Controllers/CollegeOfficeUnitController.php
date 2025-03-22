@@ -23,6 +23,7 @@ class CollegeOfficeUnitController extends Controller
             $collegeOfficeUnits[] = [
                 'id' => $collegeUnit->id,
                 'college_office_unit_name' => $collegeUnit->college_office_unit_name,
+                'acronym' => $collegeUnit->acronym,
                 'category_id' => $collegeUnit->category_id,
                 'category_name' => $collegeUnit->category->category_name,
             ];
@@ -35,11 +36,13 @@ class CollegeOfficeUnitController extends Controller
         try {
             $request->validate([
                 'formAddCollegeUnitName' => 'required|string|max:255',
-                'formAddCollegeUnitType' => 'required|exists:college_office_unit_categories,id'
+                'formAddCollegeUnitType' => 'required|exists:college_office_unit_categories,id',
+                'formAddCollegeUnitAcronym' => 'nullable|string|max:255',
             ]);
 
             CollegeOfficeUnit::create([
                 'college_office_unit_name' => $request->formAddCollegeUnitName,
+                'acronym' => $request->formAddCollegeUnitAcronym,
                 'category_id' => $request->formAddCollegeUnitType
             ]);
 
@@ -62,6 +65,7 @@ class CollegeOfficeUnitController extends Controller
 
             $collegeOfficeUnit->update([
                 'college_office_unit_name' => $request->college_office_unit_name,
+                'acronym' => $request->college_office_unit_acronym,
                 'category_id' => $request->college_office_unit_category_id
             ]);
 

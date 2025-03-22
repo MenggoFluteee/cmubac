@@ -7,6 +7,7 @@ use App\Models\BudgetAllocation;
 use App\Models\CollegeOfficeUnit;
 use App\Models\Item;
 use App\Models\PPMP;
+use App\Models\PurchaseRequest;
 use App\Models\User;
 use App\Models\WholeBudget;
 use Illuminate\Http\Request;
@@ -109,4 +110,16 @@ class BudgetController extends Controller
         $ppmp = PPMP::findOrFail($id);
         return view('budget.view_ppmp_details', compact('ppmp'));
     }
+
+    public function budgetOfficePurchaseRequestsPage()
+    {
+        return view('budget.purchase_requests_page');
+    }
+
+    public function budgetOfficePurchaseRequestDetails($id)
+    {
+        $purchaseRequest = PurchaseRequest::findOrFail($id);
+        return view('budget.purchase_request_details', compact('purchaseRequest'));
+    }
+    
 }

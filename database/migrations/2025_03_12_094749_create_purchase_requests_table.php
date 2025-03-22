@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('date_approved')->nullable();
             $table->foreignId('prepared_by')->constrained('users');
             $table->foreignId('college_office_unit_id')->constrained('college_office_units');
+            $table->bigInteger('incrementing_number');
             $table->timestamps();
         });
     }
