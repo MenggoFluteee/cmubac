@@ -172,7 +172,6 @@ Route::middleware('auth', CheckRole::class . ':3')->group(function () {
 
     // BUDGET OFFICE MANAGEMENT OF PURCHASE REQUESTS
     Route::get('budget-office-fetch-purchase-requests', [PurchaseRequestController::class, 'budgetOfficeFetchPurchaseRequests'])->name('budgetOfficeFetchPurchaseRequests');
-
 });
 
 // USER
@@ -215,5 +214,4 @@ Route::middleware('auth', CheckRole::class . ':4')->group(function () {
     // PR MANAGEMENT
     Route::get('end-user-fetch-pr', [PurchaseRequestController::class, 'endUserFetchPurchaseRequests'])->name('endUserFetchPurchaseRequests');
     Route::post('end-user-create-new-pr', [PurchaseRequestController::class, 'endUserCreateNewPR'])->name('endUserCreateNewPR');
-
 });
