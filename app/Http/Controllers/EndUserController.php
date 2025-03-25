@@ -128,10 +128,15 @@ class EndUserController extends Controller
         return view('end_user.purchase_request_page', compact('approvedPPMP', 'purchaseRequests'));
     }
 
+    public function endUserPRDetails($id)
+    {
+        $purchaseRequest = PurchaseRequest::findOrFail($id);
+        return view('end_user.purchase_request_details_page', compact('purchaseRequest'));
+    }
+
 
     public function userPoPage()
     {
         return view('end_user.purchase_order_page');
     }
-
 }

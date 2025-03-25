@@ -13,6 +13,7 @@
     <meta name="author" content="Bootlab">
 
     <title>ProcureNet | @yield('title')</title>
+    
 
     <link rel="shortcut icon" href="{{ asset('images/cmulogo.png') }}">
 
@@ -47,7 +48,6 @@
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('plugins/inputmask/inputmask.js') }}"></script>
     <script src="{{ asset('plugins/inputmask/jquery.inputmask.js') }}"></script>
-
 
 
     <style>

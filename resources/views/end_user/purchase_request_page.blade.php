@@ -32,7 +32,7 @@
                                 </thead>
 
                                 <tbody>
-                                    
+
                                 </tbody>
                             </table>
                         </div>
@@ -114,7 +114,7 @@
                                 break;
                             case 2:
                                 approvalStatusBadge =
-                                '<span class="badge bg-danger">Disapproved</span>';
+                                    '<span class="badge bg-danger">Disapproved</span>';
                                 break;
                             default:
                                 approvalStatusBadge = '<span class="badge bg-secondary">Unknown</span>';
@@ -155,6 +155,10 @@
                     console.error(xhr.responseText);
                 }
             });
+        }
+
+        function viewPurchaseRequest(id) {
+            window.location.href = `end-user-purchase-request-details/${id}`;
         }
 
 

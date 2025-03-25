@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PPMPItem;
 use App\Models\PurchaseRequest;
-
+use App\Models\PurchaseRequestItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -39,26 +40,14 @@ class PurchaseRequestController extends Controller
             'purposeOfRequest' => 'nullable|string|max:255'
         ]);
 
-        // Get the college office unit data
         $collegeOfficeUnit = Auth::user()->collegeOfficeUnit;
-
-        // Use the acronym if available, otherwise generate one from the full college name
         $collegeAcronym = $collegeOfficeUnit->acronym ?? implode('', array_map(fn($word) => strtoupper($word[0]), explode(' ', $collegeOfficeUnit->college_office_unit_name)));
-
-        // Get current year and month
         $yearMonth = date('mY');
-
-        // Determine the next incrementing number for PR within the same college
-        $maxIncrementingNumber = PurchaseRequest::where('college_office_unit_id', Auth::user()->collegeOfficeUnit->id)
-            ->max('incrementing_number');
-
+        $maxIncrementingNumber = PurchaseRequest::where('college_office_unit_id', Auth::user()->collegeOfficeUnit->id)->max('incrementing_number');
         $incrementingNumber = $maxIncrementingNumber ? $maxIncrementingNumber + 1 : 1;
-
-        // Construct the PR code
         $prCode = "{$collegeAcronym}-PR-{$yearMonth}-{$incrementingNumber}";
 
-        // Create the new PR
-        PurchaseRequest::create([
+        $purchaseRequest = PurchaseRequest::create([
             'pr_code' => $prCode,
             'ppmp_id' => $validatedData['formSelectPPMPToPR'],
             'purpose' => $validatedData['purposeOfRequest'],
@@ -69,8 +58,33 @@ class PurchaseRequestController extends Controller
             'incrementing_number' => $incrementingNumber,
         ]);
 
-        return redirect()->back()->with(['success' => true, 'message' => 'Purchase Request created successfully!']);
+        // Get all items from the selected PPMP
+        $ppmpItems = PPMPItem::where('ppmp_id', $validatedData['formSelectPPMPToPR'])->get();
+
+        // Copy each PPMP item to the Purchase Request Items
+        foreach ($ppmpItems as $ppmpItem) {
+            PurchaseRequestItem::create([
+                'purchase_request_id' => $purchaseRequest->id,
+                'item_id' => $ppmpItem->item_id,
+                'status' => 0, // Default status, change as needed
+                'january_quantity' => $ppmpItem->january_quantity,
+                'february_quantity' => $ppmpItem->february_quantity,
+                'march_quantity' => $ppmpItem->march_quantity,
+                'april_quantity' => $ppmpItem->april_quantity,
+                'may_quantity' => $ppmpItem->may_quantity,
+                'june_quantity' => $ppmpItem->june_quantity,
+                'july_quantity' => $ppmpItem->july_quantity,
+                'august_quantity' => $ppmpItem->august_quantity,
+                'september_quantity' => $ppmpItem->september_quantity,
+                'october_quantity' => $ppmpItem->october_quantity,
+                'november_quantity' => $ppmpItem->november_quantity,
+                'december_quantity' => $ppmpItem->december_quantity,
+            ]);
+        }
+
+        return redirect()->back()->with(['success' => true, 'message' => 'Purchase Request created successfully with items copied from PPMP!']);
     }
+
 
     public function endUserFetchPurchaseRequests()
     {

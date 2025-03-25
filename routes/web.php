@@ -184,6 +184,9 @@ Route::middleware('auth', CheckRole::class . ':4')->group(function () {
     Route::get('end-user-ppmp-details/{id}', [EndUserController::class, 'endUserPPMPDetails'])->name('endUserPPMPDetails');
     Route::post('end-user-submit-ppmp', [EndUserController::class, 'endUserSubmitPPMPTemplate'])->name('endUserSubmitPPMPTemplate');
 
+    Route::get('end-user-purchase-request-details/{id}', [EndUserController::class, 'endUserPRDetails'])->name('endUserPRDetails');
+
+
 
     Route::get('user-pr-page', [EndUserController::class, 'userPrPage'])->name('userPrPage');
     Route::get('user-po-page', [EndUserController::class, 'userPoPage'])->name('userPoPage');

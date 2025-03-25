@@ -16,6 +16,18 @@ return new class extends Migration
             $table->foreignId('purchase_request_id')->constrained('purchase_requests');
             $table->foreignId('item_id')->constrained('items');
             $table->bigInteger('status')->default(0);
+            $table->integer('january_quantity');
+            $table->integer('february_quantity');
+            $table->integer('march_quantity');
+            $table->integer('april_quantity');
+            $table->integer('may_quantity');
+            $table->integer('june_quantity');
+            $table->integer('july_quantity');
+            $table->integer('august_quantity');
+            $table->integer('september_quantity');
+            $table->integer('october_quantity');
+            $table->integer('november_quantity');
+            $table->integer('december_quantity');
             $table->timestamps();
         });
     }

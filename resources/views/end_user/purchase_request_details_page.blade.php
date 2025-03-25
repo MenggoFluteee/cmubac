@@ -5,9 +5,25 @@
 @section('content')
     <div class="container-fluid p-0">
 
-        <div class="row mb-2 mb-xl-3 align-items-center">
+        <div class="row mb-2 mb-xl-3 d-flex align-items-center">
+            <div class="col d-flex align-items-center">
+                <h3 class="mb-0">Purchase Request Details</h3>
+                <div class="ms-3">
+                    @if ($purchaseRequest->approval_status == 0)
+                        <span class="badge bg-warning">Pending</span>
+                    @elseif($purchaseRequest->approval_status == 1)
+                        <span class="badge bg-success">Approved</span>
+                    @elseif($purchaseRequest->approval_status == 2)
+                        <span class="badge bg-danger">Disapproved</span>
+                    @endif
+                </div>
+            </div>
             <div class="col-auto">
-                <h1 class="mb-0">Purchase Requests Details</h1>
+                @if ($purchaseRequest->is_submitted == 0)
+                    <span class="badge bg-warning">Draft</span>
+                @elseif($purchaseRequest->is_submitted == 1)
+                    <span class="badge bg-success">Submitted</span>
+                @endif
             </div>
         </div>
 
@@ -71,13 +87,23 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($purchaseRequest->purchaseRequestItems as $key => $item)
+                                    @foreach ($purchaseRequest->purchaseRequestItems as $key => $item)
                                         @php
-                                            $quantity = $item->january_quantity + $item->february_quantity + $item->march_quantity +
-                                                        $item->april_quantity + $item->may_quantity + $item->june_quantity +
-                                                        $item->july_quantity + $item->august_quantity + $item->september_quantity +
-                                                        $item->october_quantity + $item->november_quantity + $item->december_quantity;
-                                            $unitPrice = $item->item->prices()->where('is_active', 1)->first()->price ?? 0;
+                                            $quantity =
+                                                $item->january_quantity +
+                                                $item->february_quantity +
+                                                $item->march_quantity +
+                                                $item->april_quantity +
+                                                $item->may_quantity +
+                                                $item->june_quantity +
+                                                $item->july_quantity +
+                                                $item->august_quantity +
+                                                $item->september_quantity +
+                                                $item->october_quantity +
+                                                $item->november_quantity +
+                                                $item->december_quantity;
+                                            $unitPrice =
+                                                $item->item->prices()->where('is_active', 1)->first()->price ?? 0;
                                             $totalCost = $quantity * $unitPrice;
                                         @endphp
                                         <tr>
@@ -93,14 +119,18 @@
                                 <tbody>
                                     <tr>
                                         <td colspan="6" class="text-end">
-                                            <h5>TOTAL: {{ number_format($purchaseRequest->purchaseRequestItems->sum(fn($item) => ($item->january_quantity + $item->february_quantity + $item->march_quantity + $item->april_quantity + $item->may_quantity + $item->june_quantity + $item->july_quantity + $item->august_quantity + $item->september_quantity + $item->october_quantity + $item->november_quantity + $item->december_quantity) * ($item->item->prices()->where('is_active', 1)->first()->price ?? 0)), 2) }}</h5>
+                                            <h5>TOTAL:
+                                                {{ number_format($purchaseRequest->purchaseRequestItems->sum(fn($item) => ($item->january_quantity + $item->february_quantity + $item->march_quantity + $item->april_quantity + $item->may_quantity + $item->june_quantity + $item->july_quantity + $item->august_quantity + $item->september_quantity + $item->october_quantity + $item->november_quantity + $item->december_quantity) * ($item->item->prices()->where('is_active', 1)->first()->price ?? 0)), 2) }}
+                                            </h5>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="6" class="text-end">
                                             <div class="row align-items-center">
                                                 <div class="col-6 text-start">Purpose:</div>
-                                                <div class="col-6 text-start"><strong>{{ $purchaseRequest->purpose }}</strong></div>
+                                                <div class="col-6 text-start">
+                                                    <strong>{{ $purchaseRequest->purpose }}</strong>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -124,6 +154,10 @@
                                     </tr>
                                 </tbody>
                             </table>
+
+                            <div class="text-center">
+                                <button class="btn btn-success">Submit</button>
+                            </div>
                         </div>
                     </div>
                 </div>
