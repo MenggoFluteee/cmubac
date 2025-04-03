@@ -12,19 +12,19 @@
 
             <div class="col-auto ms-auto">
                 <div class="d-flex align-items-center">
-                    <form class="" method="GET">
+                    <form method="GET">
                         <label for="filterByYear" class="me-2">Select Year:</label>
                         <select name="filterByYear" id="filterByYear" class="form-select" onchange="this.form.submit()">
-                            @foreach ($availableYears as $y)
-                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>
-                                    {{ $y }}
+                            @foreach ($years as $yearOption)
+                                <option value="{{ $yearOption->year }}" {{ $yearOption->year == $year ? 'selected' : '' }}>
+                                    {{ $yearOption->year }}
                                 </option>
                             @endforeach
                         </select>
                     </form>
                 </div>
-
             </div>
+
 
 
         </div>
@@ -76,7 +76,7 @@
                                                 <div class="text-center">
                                                     <img alt="CMU Logo" src="{{ asset('images/cmulogo.png') }}"
                                                         class="rounded-circle img-responsive mt-2" width="150"
-                                                        height="150" >
+                                                        height="150">
 
                                                 </div>
                                             </div>

@@ -46,6 +46,11 @@
                 <i class="align-middle" data-lucide="users"></i> <span class="align-middle">User Management</span>
             </a>
         </li>
+        <li class="sidebar-item">
+            <a class='sidebar-link' href="{{ route('adminSettingsPage') }}">
+                <i class="align-middle" data-lucide="settings"></i> <span class="align-middle">Settings</span>
+            </a>
+        </li>
     @endif
 
 

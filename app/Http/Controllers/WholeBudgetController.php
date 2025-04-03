@@ -13,7 +13,7 @@ class WholeBudgetController extends Controller
     public function fetchYearlyBudget(Request $request)
     {
 
-        $wholeBudgetRaw = WholeBudget::all();
+        $wholeBudgetRaw = WholeBudget::where('year', $request->year)->get();
 
         $wholeBudgets = [];
 

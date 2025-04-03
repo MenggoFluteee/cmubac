@@ -11,16 +11,16 @@
             </div>
             <div class="col-auto ms-auto">
                 <div class="d-flex align-items-center">
-                    <form class="" method="GET">
-                        <label for="filterByYear" class="me-2">Select Year:</label>
-                        <select name="filterByYear" id="filterByYear" class="form-select" onchange="this.form.submit()">
-                            @foreach ($availableYears as $y)
-                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>
-                                    {{ $y }}
+                    <div class="col-6">Filter By Year:</div>
+                    <div class="col-6">
+                        <select name="filterByYear" id="filterByYear" class="form-control">
+                            @foreach ($years as $year)
+                                <option value="{{ $year->year }}" {{ $year->is_current == 1 ? 'selected' : '' }}>
+                                    {{ $year->year }}
                                 </option>
                             @endforeach
                         </select>
-                    </form>
+                    </div>
                 </div>
 
             </div>
@@ -102,7 +102,7 @@
     </div>
 
     <script>
-        function refreshPPMPsTable() {
+        function refreshPPMPsTable(year) {
             showLoadingIndicator();
 
             $.ajax({
@@ -111,7 +111,7 @@
                 dataType: 'json',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    yearSelect: $('#filterByYear').val(),
+                    year: year,
                 },
                 success: function(data) {
                     hideLoadingIndicator();
@@ -180,6 +180,47 @@
                 }
             });
         }
+
+        function refreshBudgetAllocations(year) {
+            $.ajax({
+                url: "{{ route('fetchBudgetAllocationsForPPMP') }}", // Create this route
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    year: year,
+                },
+                success: function(data) {
+                    let select = $('#addNewPPMPAccountCode');
+                    select.empty(); // Clear previous options
+
+                    if (data.length > 0) {
+                        select.append(
+                            '<option value="" disabled selected>Select an account code with budget</option>'
+                        );
+                        data.forEach(allocation => {
+                            select.append(`
+                        <option value="${allocation.id}">
+                            ${allocation.account_code.account_name} |
+                            ${new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(allocation.amount)} |
+                            ${allocation.whole_budget.source_of_fund} |
+                            ${allocation.whole_budget.year}
+                        </option>
+                    `);
+                        });
+                    } else {
+                        select.append(
+                            '<option value="" disabled selected>No budget available for this year</option>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+
+
         $(document).ready(function() {
             $('#ppmpsTable').DataTable({
                 "paging": true,
@@ -196,8 +237,15 @@
 
 
 
-            refreshPPMPsTable();
+            refreshPPMPsTable($('#filterByYear').val());
+            refreshBudgetAllocations($('#filterByYear').val());
 
+
+            $('#filterByYear').change(function(e) {
+                let selectedYear = $(this).val();
+                refreshPPMPsTable(selectedYear);
+                refreshBudgetAllocations(selectedYear);
+            });
         });
     </script>
 
@@ -228,7 +276,8 @@
                         success: function(response) {
                             if (response.success) {
                                 Swal.fire('Deleted!', `${response.message}`, 'success').then(() => {
-                                    refreshPPMPsTable();
+                                    refreshPPMPsTable($('#filterByYear').val());
+                                    refreshBudgetAllocations($('#filterByYear').val());
                                 });
                             } else {
                                 Swal.fire({
@@ -241,7 +290,8 @@
                         },
                         error: function(xhr, status, error) {
                             Swal.fire('Error!', 'Something went wrong.', 'error').then(() => {
-                                refreshPPMPsTable();
+                                refreshPPMPsTable($('#filterByYear').val());
+                                refreshBudgetAllocations($('#filterByYear').val());
                             });
                             console.error(xhr.responseText);
                         },
@@ -273,7 +323,9 @@
                         title: 'Success!',
                         text: response.message
                     }).then(() => {
-                        refreshPPMPsTable();
+                        refreshPPMPsTable($('#filterByYear').val());
+                        refreshBudgetAllocations($('#filterByYear').val());
+
                     });
                 },
                 error: function(xhr) {

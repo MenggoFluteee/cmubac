@@ -15,10 +15,9 @@
                     <form method="GET">
                         <label for="filterByYear" class="me-2">Select Year:</label>
                         <select name="filterByYear" id="filterByYear" class="form-select" onchange="this.form.submit()">
-                            @foreach ($availableYears as $y)
-                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>
-                                    {{ $y }}
-                                </option>
+                            @foreach ($years as $year)
+                                <option value="{{ $year->year }}" {{ $year->year == $selectedYear ? 'selected' : '' }}>
+                                    {{ $year->year }}</option>
                             @endforeach
                         </select>
                     </form>

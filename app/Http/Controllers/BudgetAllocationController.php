@@ -160,6 +160,20 @@ class BudgetAllocationController extends Controller
             ]);
         }
 
-        return response()->json(['success' => true, 'message'=> 'Budget Allocation Updated Successfully!']);
+        return response()->json(['success' => true, 'message' => 'Budget Allocation Updated Successfully!']);
+    }
+
+    public function fetchBudgetAllocationsForPPMP(Request $request)
+    {
+        $year = $request->input('year', date('Y'));
+
+        $budgetAllocations = BudgetAllocation::where('college_office_unit_id', Auth::user()->college_office_unit_id)
+            ->whereHas('wholeBudget', function ($query) use ($year) {
+                $query->where('year', $year);
+            })
+            ->with('accountCode', 'wholeBudget')
+            ->get();
+
+        return response()->json($budgetAllocations);
     }
 }

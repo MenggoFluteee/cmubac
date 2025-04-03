@@ -16,8 +16,10 @@ use App\Http\Controllers\PPMPController;
 use App\Http\Controllers\PPMPItemController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\RequestedItemController;
+use App\Http\Controllers\SignatoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WholeBudgetController;
+use App\Http\Controllers\YearController;
 use App\Http\Middleware\CheckRole;
 use App\Models\BudgetAllocation;
 use App\Models\Canvass;
@@ -25,6 +27,7 @@ use App\Models\CollegeOfficeUnit;
 use App\Models\PPMP;
 use App\Models\PPMPItem;
 use App\Models\RequestedItem;
+use App\Models\Signatory;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +64,7 @@ Route::middleware('auth', CheckRole::class . ':1')->group(function () {
     Route::get('admin-account-codes', [AdminController::class, 'adminAccountCodesPage'])->name('adminAccountCodesPage');
     Route::get('admin-user-management', [AdminController::class, 'adminUserManagementPage'])->name('adminUserManagementPage');
     Route::get('admin-user-details/{id}', [AdminController::class, 'adminUserDetailsPage'])->name('adminUserDetailsPage');
+    Route::get('admin-settings', [AdminController::class, 'adminSettingsPage'])->name('adminSettingsPage');
 
     // MANAGING DATA OF COLLEGE OFFICE UNITS
     Route::post('admin-fetch-college-office-units', [CollegeOfficeUnitController::class, 'fetchCollegeOfficeUnits'])->name('fetchCollegeOfficeUnits');
@@ -94,6 +98,14 @@ Route::middleware('auth', CheckRole::class . ':1')->group(function () {
     Route::post('admin-update-user-privileges', [UserController::class, 'updateUserPrivileges'])->name('updateUserPrivileges');
     Route::post('admin-update-user-personal-information', [UserController::class, 'updateUserPersonalInformation'])->name('updateUserPersonalInformation');
     Route::post('admin-update-user-account', [UserController::class, 'updateUserAccount'])->name('updateUserAccount');
+
+    Route::get('admin-fetch-signatories', [SignatoryController::class, 'fetchSignatory'])->name('adminFetchSignatories');
+    Route::post('admin-add-new-signatory', [SignatoryController::class, 'adminAddSignatory'])->name('adminAddSignatory');
+    Route::post('admin-edit-signatory', [SignatoryController::class, 'adminEditSignatory'])->name('adminEditSignatory');
+    Route::post('admin-delete-signatory', [SignatoryController::class, 'adminDeleteSignatory'])->name('adminDeleteSignatory');
+
+    Route::post('admin-add-year', [YearController::class, 'addYear'])->name('addYear');
+    Route::post('admin-update-year', [YearController::class, 'updateYear'])->name('updateYear');
 });
 
 // BAC
@@ -131,7 +143,6 @@ Route::middleware('auth', CheckRole::class . ':2')->group(function () {
 Route::middleware('auth', CheckRole::class . ':3')->group(function () {
     Route::get('budget-office-dashboard', [BudgetController::class, 'budgetOfficeDashboard'])->name('budgetOfficeDashboard');
     Route::get('budget-office-yearly-budget-page', [BudgetController::class, 'budgetOfficeYearlyBudgetPage'])->name('budgetOfficeYearlyBudgetPage');
-    Route::get('budget-office-budget-allocation-page', [BudgetController::class, 'budgetOfficeBudgetAllocationPage'])->name('budgetOfficeBudgetAllocationPage');
     Route::get('budget-office-budget-allocation-v2-page', [BudgetController::class, 'budgetOfficeBudgetAllocationV2Page'])->name('budgetOfficeBudgetAllocationV2Page');
     Route::get('budget-office-account-codes-page', [BudgetController::class, 'budgetOfficeAccountCodesPage'])->name('budgetOfficeAccountCodesPage');
     Route::get('budget-ppms-page', [BudgetController::class, 'budgetPPMPsPage'])->name('budgetPPMPsPage');
@@ -166,7 +177,7 @@ Route::middleware('auth', CheckRole::class . ':3')->group(function () {
     Route::post('budget-office-edit-budget-allocation', [BudgetAllocationController::class, 'budgetOfficeEditBudgetAllocation'])->name('budgetOfficeEditBudgetAllocation');
 
     // BUDGET OFFICE MANAGEMENT OF THE PPMPS
-    Route::post('budget-office-fetch-ppmps', [BudgetController::class, 'budgetFetchPPMPs'])->name('budgetFetchPPMPs');
+    Route::get('budget-office-fetch-ppmps', [BudgetController::class, 'budgetFetchPPMPs'])->name('budgetFetchPPMPs');
     Route::post('budget-office-update-ppmp-status', [PPMPController::class, 'budgetOfficeUpdatePPMPStatus'])->name('budgetOfficeUpdatePPMPStatus');
     Route::post('budget-office-add-comment-to-ppmp', [PPMPCommentController::class, 'budgetOfficeAddCommentToPPMP'])->name('budgetOfficeAddCommentToPPMP');
 
@@ -194,6 +205,8 @@ Route::middleware('auth', CheckRole::class . ':4')->group(function () {
     Route::post('end-user-fetch-ppmps', [PPMPController::class, 'endUserFetchPPMPs'])->name('endUserFetchPPMPs');
     Route::post('end-user-add-new-ppmp', [PPMPController::class, 'endUserAddNewPPMP'])->name('endUserAddNewPPMP');
     Route::post('end-user-delete-ppmp', [PPMPController::class, 'endUserDeletePPMP'])->name('endUserDeletePPMP');
+
+    Route::post('end-user-fetch-budgets-for-ppmp', [BudgetAllocationController::class, 'fetchBudgetAllocationsForPPMP'])->name('fetchBudgetAllocationsForPPMP');
 
     // End user adding of item on PPMP
     // Fetching of items to displat to the PPMP Details Page

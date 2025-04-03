@@ -10,6 +10,7 @@ use App\Models\PPMP;
 use App\Models\PurchaseRequest;
 use App\Models\RequestedItem;
 use App\Models\WholeBudget;
+use App\Models\Year;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -31,25 +32,41 @@ class EndUserController extends Controller
 
     public function userBudgetsPage(Request $request)
     {
-        $year = $request->input('filterByYear', date('Y'));
-        $collegeOfficeUnitId = Auth::user()->collegeOfficeUnit->id;
+        // Fetch all years
+        $years = Year::all();
 
-        $accountCodes = AccountCode::with(['budgetAllocations' => function ($query) use ($year, $collegeOfficeUnitId) {
-            $query->whereHas('wholeBudget', function ($q) use ($year) {
-                $q->where('year', $year);
-            })
-                ->where('college_office_unit_id', $collegeOfficeUnitId);
+        // Get the default year from the Year model where is_current = 1
+        $defaultYear = Year::where('is_current', 1)->value('year') ?? date('Y');
+
+        // Get the selected year from the request, defaulting to the current year
+        $selectedYear = $request->input('filterByYear', $defaultYear);
+
+        // Get the user's college office unit ID
+        $collegeOfficeUnitId = Auth::user()->collegeOfficeUnit->id ?? null;
+
+        // Fetch account codes with related budget allocations
+        $accountCodes = AccountCode::with(['budgetAllocations' => function ($query) use ($selectedYear, $collegeOfficeUnitId) {
+            $query->whereHas('wholeBudget', function ($q) use ($selectedYear) {
+                $q->where('year', $selectedYear);
+            })->where('college_office_unit_id', $collegeOfficeUnitId);
         }])->get();
 
-        $yearlyBudget = WholeBudget::where('year', $year)->get();
-        $availableYears = WholeBudget::distinct()->pluck('year')->sort()->reverse();
+        // Get yearly budget data
+        $yearlyBudget = WholeBudget::where('year', $selectedYear)->get();
+
+        // Fetch available years sorted in descending order
+        $availableYears = WholeBudget::distinct()->pluck('year')->sortDesc();
+
         return view('end_user.budgets_page', compact(
             'yearlyBudget',
-            'year',
+            'selectedYear', // Change 'year' to 'selectedYear' to avoid confusion
             'availableYears',
-            'accountCodes'
+            'accountCodes',
+            'years'
         ));
     }
+
+
 
     public function userRequestItemsPage()
     {
@@ -69,11 +86,9 @@ class EndUserController extends Controller
 
     public function userPpmpsPage(Request $request)
     {
-        $year = $request->input('filterByYear', date('Y'));
+        $year = $request->input('year', date('Y'));
 
-        // Get available years from WholeBudget
-        $availableYears = WholeBudget::distinct()->pluck('year')->sort()->reverse();
-
+        $years = Year::all();
         // Filter budget allocations based on the selected year
         $budgetAllocations = BudgetAllocation::where('college_office_unit_id', Auth::user()->college_office_unit_id)
             ->whereHas('wholeBudget', function ($query) use ($year) {
@@ -81,7 +96,7 @@ class EndUserController extends Controller
             })
             ->get();
 
-        return view('end_user.ppmps_page', compact('year', 'availableYears', 'budgetAllocations'));
+        return view('end_user.ppmps_page', compact('year', 'years', 'budgetAllocations'));
     }
     public function endUserPPMPDetails($id)
     {

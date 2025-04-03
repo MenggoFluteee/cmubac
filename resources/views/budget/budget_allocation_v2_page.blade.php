@@ -7,7 +7,7 @@
     <div class="container-fluid p-0">
         <div class="row mb-2 mb-xl-3 align-items-center">
             <div class="col-auto">
-                <h1 class="mb-0">Budget Allocations V2</h1>
+                <h1 class="mb-0">Budget Allocations</h1>
             </div>
         </div>
         <div class="container-fluid p-0">

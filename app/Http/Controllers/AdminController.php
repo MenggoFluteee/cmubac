@@ -10,6 +10,7 @@ use App\Models\ItemCategory;
 use App\Models\Privilege;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Year;
 use Illuminate\Http\Request;
 use Illuminate\Support\Number;
 
@@ -81,5 +82,11 @@ class AdminController extends Controller
         $allPrivileges = Privilege::all();
         $collegeOfficeUnits = CollegeOfficeUnit::all();
         return view('admin.user_details', compact('user', 'allPrivileges', 'collegeOfficeUnits'));
+    }
+
+    public function adminSettingsPage()
+    {
+        $years = Year::all();
+        return view('admin.settings_page', compact('years'));
     }
 }

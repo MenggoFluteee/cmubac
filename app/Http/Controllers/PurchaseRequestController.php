@@ -11,10 +11,15 @@ use Illuminate\Support\Facades\Auth;
 
 class PurchaseRequestController extends Controller
 {
-    public function budgetOfficeFetchPurchaseRequests()
+    public function budgetOfficeFetchPurchaseRequests(Request $request)
     {
-        $purchaseRequestsObject = PurchaseRequest::where('is_submitted', 1)->get();
+        $year = $request->input('year'); // Get the year from request
 
+        $purchaseRequestsObject = PurchaseRequest::where('is_submitted', 1)
+            ->whereHas('ppmp.budgetAllocation.wholeBudget', function ($query) use ($year) {
+                $query->where('year', $year);
+            })
+            ->get();
         $purchaseRequestArray = [];
 
         foreach ($purchaseRequestsObject as $purchaseRequest) {

@@ -5,11 +5,27 @@
 @section('content')
     <div class="container-fluid p-0">
 
+
         <div class="row mb-2 mb-xl-3 align-items-center">
             <div class="col-auto">
-                <h1 class="mb-0">Yearly Budget</h1>
+                <h3 class="mb-0">Yearly Budget</h3>
             </div>
 
+            <div class="col-auto ms-auto">
+                <div class="d-flex align-items-center">
+                    <div class="col-6">Filter By Year:</div>
+                    <div class="col-6">
+                        <select name="filterByYear" id="filterByYear" class="form-control">
+                            @foreach ($years as $year)
+                                <option value="{{ $year->year }}" {{ $year->is_current == 1 ? 'selected' : '' }}>
+                                    {{ $year->year }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+            </div>
 
         </div>
         <div class="container-fluid p-0">
@@ -207,7 +223,7 @@
 
     <script type="text/javascript">
         // Function for getting the default fetch of all the account codes
-        function refreshYearlyBudgetTable() {
+        function refreshYearlyBudgetTable(year) {
             showLoadingIndicator();
             $.ajax({
                 url: "{{ route('fetchYearlyBudget') }}",
@@ -215,6 +231,7 @@
                 dataType: 'json',
                 data: {
                     _token: "{{ csrf_token() }}",
+                    year: year,
                 },
                 success: function(data) {
                     hideLoadingIndicator();
@@ -269,7 +286,11 @@
 
 
 
-            refreshYearlyBudgetTable();
+            refreshYearlyBudgetTable($('#filterByYear').val());
+
+            $('#filterByYear').change(function(e) {
+                refreshYearlyBudgetTable($('#filterByYear').val());
+            });
 
         });
     </script>
@@ -311,7 +332,7 @@
                         title: 'Success!',
                         text: response.message
                     }).then(() => {
-                        refreshYearlyBudgetTable();
+                        refreshYearlyBudgetTable($('#filterByYear').val());
                     });
                 },
                 error: function(xhr) {
@@ -366,7 +387,7 @@
                         title: 'Success!',
                         text: response.message
                     }).then(() => {
-                        refreshYearlyBudgetTable();
+                        refreshYearlyBudgetTable($('#filterByYear').val());
                     });
                 },
                 error: function(xhr) {
@@ -407,12 +428,12 @@
                         },
                         success: function(response) {
                             Swal.fire('Deleted!', `${response.message}`, 'success').then(() => {
-                                refreshYearlyBudgetTable();
+                                refreshYearlyBudgetTable($('#filterByYear').val());
                             });
                         },
                         error: function(xhr, status, error) {
                             Swal.fire('Error!', 'Something went wrong.', 'error').then(() => {
-                                refreshYearlyBudgetTable();
+                                refreshYearlyBudgetTable($('#filterByYear').val());
                                 g;
                                 6
                             });

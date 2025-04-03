@@ -16,7 +16,7 @@ class PPMPController extends Controller
 
     public function endUserFetchPPMPs(Request $request)
     {
-        $year = $request->input('yearSelect', date('Y'));
+        $year = $request->input('year', date('Y'));
 
         // Fetch PPMPs with budgetAllocation, wholeBudget, and accountCode
         $ppmps = PPMP::with(['budgetAllocation.wholeBudget', 'budgetAllocation.accountCode'])
