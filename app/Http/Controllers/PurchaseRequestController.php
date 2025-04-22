@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\PPMPItem;
 use App\Models\PurchaseRequest;
 use App\Models\PurchaseRequestItem;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Vinkla\Hashids\Facades\Hashids;
+
 
 class PurchaseRequestController extends Controller
 {
@@ -26,6 +29,7 @@ class PurchaseRequestController extends Controller
 
             $purchaseRequestArray[] = [
                 'id' => $purchaseRequest->id,
+                'hashid' => Hashids::encode($purchaseRequest->id),
                 'pr_code' => $purchaseRequest->pr_code,
                 'college_office_unit' => $purchaseRequest->collegeOfficeUnit->college_office_unit_name,
                 'created_by' => $purchaseRequest->preparedBy ? $purchaseRequest->preparedBy->firstname . ' ' . substr($purchaseRequest->preparedBy->middlename, 0, 1) . ' ' . $purchaseRequest->preparedBy->lastname : '',
@@ -91,19 +95,28 @@ class PurchaseRequestController extends Controller
     }
 
 
-    public function endUserFetchPurchaseRequests()
+    public function endUserFetchPurchaseRequests(Request $request)
     {
-        $purchaseRequestsObject = PurchaseRequest::where('college_office_unit_id', Auth::user()->collegeOfficeUnit->id)->get();
+        $year = $request->input('year', date('Y')); // Get year from request or default to current year
+
+        $purchaseRequestsObject = PurchaseRequest::whereHas('ppmp.budgetAllocation.wholeBudget', function ($query) use ($year) {
+            $query->where('year', $year);
+        })
+            ->where('college_office_unit_id', Auth::user()->collegeOfficeUnit->id)
+            ->get();
 
         $purchaseRequestArray = [];
 
         foreach ($purchaseRequestsObject as $purchaseRequest) {
-
             $purchaseRequestArray[] = [
                 'id' => $purchaseRequest->id,
                 'pr_code' => $purchaseRequest->pr_code,
-                'created_by' => $purchaseRequest->preparedBy ? $purchaseRequest->preparedBy->firstname . ' ' . substr($purchaseRequest->preparedBy->middlename, 0, 1) . ' ' . $purchaseRequest->preparedBy->lastname : '',
-                'date_submitted' => $purchaseRequest->date_submitted ? Carbon::parse($purchaseRequest->date_submitted)->format('F d, Y') : '',
+                'created_by' => $purchaseRequest->preparedBy
+                    ? $purchaseRequest->preparedBy->firstname . ' ' . substr($purchaseRequest->preparedBy->middlename, 0, 1) . ' ' . $purchaseRequest->preparedBy->lastname
+                    : '',
+                'date_submitted' => $purchaseRequest->date_submitted
+                    ? Carbon::parse($purchaseRequest->date_submitted)->format('F d, Y')
+                    : '',
                 'approval_status' => $purchaseRequest->approval_status,
             ];
         }

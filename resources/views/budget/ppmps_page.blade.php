@@ -91,7 +91,7 @@
                         }
 
                         var viewButton = `<button type="button" class="btn btn-sm btn-success me-1" 
-                    onclick="viewItemCategory(${ppmp.ppmpId})" title="View">
+                    onclick="viewItemCategory('${ppmp.hashid}')" title="View">
                     <i class="fas fa-eye"></i>
                 </button>`;
 
@@ -139,8 +139,8 @@
     </script>
 
     <script>
-        function viewItemCategory(ppmpId) {
-            window.location.href = `budget-view-ppmp-details/${ppmpId}`;
+        function viewItemCategory(hashid) {
+            window.location.href = `budget-view-ppmp-details/${hashid}`;
         }
     </script>
 @endsection

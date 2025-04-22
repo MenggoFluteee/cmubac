@@ -89,7 +89,7 @@
                         }
 
                         var viewButton = `<button type="button" class="btn btn-sm btn-success me-1" 
-                            onclick="viewPurchaseRequest(${purchaseRequest.id})" title="Edit">
+                            onclick="viewPurchaseRequest('${purchaseRequest.hashid}')" title="Edit">
                             <i class="fas fa-eye"></i>
                         </button>`;
 
@@ -136,8 +136,8 @@
             });
         });
 
-        function viewPurchaseRequest(id) {
-            window.location.href = `budget-office-purchase-requests-details/${id}`;
+        function viewPurchaseRequest(hashid) {
+            window.location.href = `budget-office-purchase-requests-details/${hashid}`;
         }
     </script>
 

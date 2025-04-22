@@ -106,7 +106,7 @@
                                                 $item->item->prices()->where('is_active', 1)->first()->price ?? 0;
                                             $totalCost = $quantity * $unitPrice;
                                         @endphp
-                                        <tr>
+                                        <tr onclick="showPrItemDetailModal('{{ $item->item->item_name }}')">
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $item->item->unit_of_measure ?? 'N/A' }}</td>
                                             <td>{{ $item->item->item_name }} ({{ $item->item->item_description }})</td>
@@ -164,4 +164,38 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="viewItemInPrModal" tabindex="-1" role="dialog" aria-labelledby="viewItemInPrModal"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Item Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addNewPRForm" action="{{ route('endUserCreateNewPR') }}" method="POST">
+                    @csrf
+
+                    <div class="modal-body mx-3">
+                        <div class="col-12 text-center">
+                            <h3 id="itemName"></h3>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPrItemDetailModal(itemName) {
+            $('#itemName').text(itemName);
+            $('#viewItemInPrModal').modal('show');
+        }
+    </script>
 @endsection

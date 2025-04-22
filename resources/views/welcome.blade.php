@@ -131,8 +131,6 @@
         </p>
     </section>
 
-
-    <script src="{{ asset('js/landing_page.js') }}"></script>
 </body>
 
 </html>

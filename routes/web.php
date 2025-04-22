@@ -146,9 +146,9 @@ Route::middleware('auth', CheckRole::class . ':3')->group(function () {
     Route::get('budget-office-budget-allocation-v2-page', [BudgetController::class, 'budgetOfficeBudgetAllocationV2Page'])->name('budgetOfficeBudgetAllocationV2Page');
     Route::get('budget-office-account-codes-page', [BudgetController::class, 'budgetOfficeAccountCodesPage'])->name('budgetOfficeAccountCodesPage');
     Route::get('budget-ppms-page', [BudgetController::class, 'budgetPPMPsPage'])->name('budgetPPMPsPage');
-    Route::get('budget-view-ppmp-details/{id}', [BudgetController::class, 'budgetViewPPMPDetails'])->name('budgetViewPPMPDetails');
+    Route::get('budget-view-ppmp-details/{hashid}', [BudgetController::class, 'budgetViewPPMPDetails'])->name('budgetViewPPMPDetails');
     Route::get('budget-office-purchase-requests-page', [BudgetController::class, 'budgetOfficePurchaseRequestsPage'])->name('budgetOfficePurchaseRequestsPage');
-    Route::get('budget-office-purchase-requests-details/{id}', [BudgetController::class, 'budgetOfficePurchaseRequestDetails'])->name('budgetOfficePurchaseRequestDetails');
+    Route::get('budget-office-purchase-requests-details/{hashid}', [BudgetController::class, 'budgetOfficePurchaseRequestDetails'])->name('budgetOfficePurchaseRequestDetails');
 
 
     // Managing the whole budget

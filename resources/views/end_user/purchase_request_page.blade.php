@@ -6,9 +6,23 @@
 
         <div class="row mb-2 mb-xl-3 align-items-center">
             <div class="col-auto">
-                <h1 class="mb-0">Purchase Requests</h1>
+                <h1 class="mb-0">List of Purchase Requests</h1>
             </div>
+            <div class="col-auto ms-auto">
+                <div class="d-flex align-items-center">
+                    <div class="col-6">Filter By Year:</div>
+                    <div class="col-6">
+                        <select name="filterByYear" id="filterByYear" class="form-control">
+                            @foreach ($years as $year)
+                                <option value="{{ $year->year }}" {{ $year->is_current == 1 ? 'selected' : '' }}>
+                                    {{ $year->year }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
 
+            </div>
         </div>
         <div class="container-fluid p-0">
 
@@ -83,13 +97,15 @@
         </div>
     </div>
 
+    
+
 
     <script>
         $('#createPurchaseRequestButton').click(function() {
             $('#createNewPRModal').modal('show');
         });
 
-        function refreshPurchaseRequestTable() {
+        function refreshPurchaseRequestTable(year) {
             showLoadingIndicator();
             $.ajax({
                 url: "{{ route('endUserFetchPurchaseRequests') }}",
@@ -97,6 +113,7 @@
                 dataType: 'json',
                 data: {
                     _token: "{{ csrf_token() }}",
+                    year: year,
                 },
                 success: function(data) {
                     hideLoadingIndicator();
@@ -175,7 +192,11 @@
                 "scrollX": false,
 
             }).buttons().container().appendTo('#purchaseRequestsTable_wrapper .col-md-6:eq(0)');
-            refreshPurchaseRequestTable();
+            refreshPurchaseRequestTable($('#filterByYear').val());
+
+            $('#filterByYear').change(function(e) {
+                refreshPurchaseRequestTable($(this).val());
+            });
         });
     </script>
 @endsection

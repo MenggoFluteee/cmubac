@@ -12,6 +12,8 @@ use App\Models\User;
 use App\Models\WholeBudget;
 use App\Models\Year;
 use Illuminate\Http\Request;
+use Vinkla\Hashids\Facades\Hashids;
+
 
 class BudgetController extends Controller
 {
@@ -94,39 +96,46 @@ class BudgetController extends Controller
     }
 
     public function budgetFetchPPMPs(Request $request)
-{
-    // Get the year from the request, default to the current year
-    $year = $request->input('year', date('Y'));
+    {
+        $year = $request->input('year', date('Y'));
 
-    // Fetch PPMPs where WholeBudget's year matches the selected year
-    $ppmps = PPMP::where('is_submitted', 1)
-        ->whereHas('budgetAllocation.wholeBudget', function ($query) use ($year) {
-            $query->where('year', $year);
-        })
-        ->get();
+        $ppmps = PPMP::where('is_submitted', 1)
+            ->whereHas('budgetAllocation.wholeBudget', function ($query) use ($year) {
+                $query->where('year', $year);
+            })
+            ->get();
 
-    // Format the data
-    $ppmpArray = [];
+        $ppmpArray = [];
 
-    foreach ($ppmps as $ppmp) {
-        $ppmpArray[] = [
-            'ppmpId' => $ppmp->id,
-            'ppmpCode' => $ppmp->ppmp_code,
-            'collegeOfficeUnit' => $ppmp->budgetAllocation->collegeOfficeUnit->college_office_unit_name,
-            'createdBy' => $ppmp->createdBy->firstname . ' ' . strtoupper(substr($ppmp->createdBy->middlename, 0, 1)) . '. ' .  $ppmp->createdBy->lastname,
-            'dateSubmitted' => $ppmp->updated_at->format('F d, Y'),
-            'approvalStatus' => $ppmp->approval_status
-        ];
+        foreach ($ppmps as $ppmp) {
+            $ppmpArray[] = [
+                'ppmpId' => $ppmp->id,
+                'hashid' => Hashids::encode($ppmp->id), // ✅ Add this line
+                'ppmpCode' => $ppmp->ppmp_code,
+                'collegeOfficeUnit' => $ppmp->budgetAllocation->collegeOfficeUnit->college_office_unit_name,
+                'createdBy' => $ppmp->createdBy->firstname . ' ' . strtoupper(substr($ppmp->createdBy->middlename, 0, 1)) . '. ' .  $ppmp->createdBy->lastname,
+                'dateSubmitted' => $ppmp->updated_at->format('F d, Y'),
+                'approvalStatus' => $ppmp->approval_status
+            ];
+        }
+
+        return response()->json($ppmpArray);
     }
 
-    return response()->json($ppmpArray);
-}
 
 
-    public function budgetViewPPMPDetails($id)
+    public function budgetViewPPMPDetails($hashid)
     {
+        $decoded = Hashids::decode($hashid);
+
+        if (empty($decoded)) {
+            abort(404); // hash is invalid or not decodable
+        }
+
+        $id = $decoded[0];
 
         $ppmp = PPMP::findOrFail($id);
+
         return view('budget.view_ppmp_details', compact('ppmp'));
     }
 
@@ -136,8 +145,16 @@ class BudgetController extends Controller
         return view('budget.purchase_requests_page', compact('years'));
     }
 
-    public function budgetOfficePurchaseRequestDetails($id)
+    public function budgetOfficePurchaseRequestDetails($hashid)
     {
+        $decoded = Hashids::decode($hashid);
+
+        if (empty($decoded)) {
+            abort(404); // hash is invalid or not decodable
+        }
+
+        $id = $decoded[0];
+
         $purchaseRequest = PurchaseRequest::findOrFail($id);
         return view('budget.purchase_request_details', compact('purchaseRequest'));
     }

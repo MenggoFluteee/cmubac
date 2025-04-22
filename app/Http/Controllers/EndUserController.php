@@ -134,13 +134,15 @@ class EndUserController extends Controller
 
     public function userPrPage()
     {
+        $years = Year::all();
+
         $approvedPPMP = PPMP::whereHas('budgetAllocation', function ($query) {
             $query->where('college_office_unit_id', Auth::user()->college_office_unit_id)->where('approval_status', 1);
         })->get();
 
         $purchaseRequests = PurchaseRequest::where('college_office_unit_id', Auth::user()->college_office_unit_id)->get();
 
-        return view('end_user.purchase_request_page', compact('approvedPPMP', 'purchaseRequests'));
+        return view('end_user.purchase_request_page', compact('approvedPPMP', 'purchaseRequests', 'years'));
     }
 
     public function endUserPRDetails($id)
